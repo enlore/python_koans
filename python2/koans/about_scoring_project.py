@@ -34,9 +34,48 @@ from runner.koan import *
 # Your goal is to write the score method.
 
 def score(dice):
-    # You need to write this method
-    pass
+    score = 0
+    if len(dice) is 0:
+        return score
 
+    if len(dice) is 1:
+        if dice[0] is 5:
+            score = 50
+        if dice[0] is 1:
+            score = 100
+        return score
+   
+    occurance_count = {}
+    if len(dice) is not 0:
+        for die in dice:
+            if occurance_count.has_key(die):
+                occurance_count[die] += 1
+            else:
+                occurance_count[die] = 1
+
+        # iter over occ counts for each digit
+        # for one and five, if count is less than three, score accordingly
+        # for everything else, diminish count by threes, incrementing score
+        # per chunk accordingly
+        for key, val in occurance_count.items():
+            if key is 1: 
+                count = val / 3
+                rem = val % 3
+                score += 1000 * count
+                score += 100 * rem 
+
+            elif key is 5:
+                count = val / 3
+                rem = val % 3
+                score += 500 * count
+                score += 50 * rem 
+
+            else: 
+                if val % 3 is 0:
+                    count = val / 3
+                    score += (100 * key) * count
+
+        return score
 
 class AboutScoringProject(Koan):
     def test_score_of_an_empty_list_is_zero(self):
@@ -63,6 +102,9 @@ class AboutScoringProject(Koan):
         self.assertEqual(400, score([4, 4, 4]))
         self.assertEqual(500, score([5, 5, 5]))
         self.assertEqual(600, score([6, 6, 6]))
+        self.assertEqual(600, score([3,3,3,3,3,3]))
+        self.assertEqual(1200, score([4,4,4,4,4,4,4,4,4]))
+        
     
     def test_score_of_mixed_is_sum(self):
         self.assertEqual(250, score([2, 5, 2, 2, 3]))
